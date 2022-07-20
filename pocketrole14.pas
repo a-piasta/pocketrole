@@ -383,7 +383,7 @@ Writeln('|/ ||  |  |/ |=  |      |  |/ || |  |  |=');
 textcolor(10);
 Writeln('|  \/  \/ |\ |=  |      |  |\ \/ |_ |_ |=');
 textcolor(0);
-writeln('1.3');
+writeln('1.4');
 textcolor(15);
 writeln();
 writeln();
