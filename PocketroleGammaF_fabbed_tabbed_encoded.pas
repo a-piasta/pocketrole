@@ -63,7 +63,150 @@ type queue = record
   b,e:longint;
   q:array of longint;
 end;
-
+function trans(w:word): string;
+var s:string;
+begin
+  s := '';
+  if w<$7F then s:=char(w)
+  else if w<=$7FF then s:=char(128+64+w div 64)+chr(128+w mod 64)
+  else s:=chr(128+64+32+w div 4096)+chr(128+w div 64 mod 64)+chr(128+w mod 64);
+  trans:=s;
+end;
+procedure writewidechar(w:widechar);
+var o:word;
+begin
+  o:=ord(w);
+  if o<=$7F then write(w)
+  else if o<=$7FF then write(chr(128+64+o div 64),chr(128+o mod 64))
+  else write(chr(128+64+32+o div 4096),chr(128+o div 64 mod 64),chr(128+o mod 64))
+end;
+function recalc(u: word): word;
+begin
+  recalc:=u;
+  case u of
+    0: recalc:=0;
+    1: recalc:=$263A;
+    2: recalc:=$263B;
+    3: recalc:=$2665;
+    4: recalc:=$2666;
+    5: recalc:=$2663;
+    6: recalc:=$2660;
+    7: recalc:=$2022;
+    8: recalc:=$25D8;
+    9: recalc:=$25CB;
+    10: recalc:=$25D9;
+    11: recalc:=$2642;
+    12: recalc:=$2640;
+    13: recalc:=$266A;
+    14: recalc:=$266B;
+    15: recalc:=$263C;
+    16: recalc:=$25BA;
+    17: recalc:=$25C4;
+    18: recalc:=$2195;
+    19: recalc:=$203C;
+    20: recalc:=$00B6;
+    21: recalc:=$00A7;
+    22: recalc:=$25AC;
+    23: recalc:=$21A8;
+    24: recalc:=$2191;
+    25: recalc:=$2193;
+    26: recalc:=$2192;
+    27: recalc:=$2190;
+    28: recalc:=$221F;
+    29: recalc:=$2194;
+    30: recalc:=$25B2;
+    31: recalc:=$25BC;
+    176: recalc:=$2591;
+    177: recalc:=$2592;
+    178: recalc:=$2593;
+    179: recalc:=$2502;
+    180: recalc:=$2524;
+    181: recalc:=$2561;
+    182: recalc:=$2562;
+    183: recalc:=$2556;
+    184: recalc:=$2555;
+    185: recalc:=$2563;
+    186: recalc:=$2551;
+    187: recalc:=$2557;
+    188: recalc:=$255D;
+    189: recalc:=$255C;
+    190: recalc:=$255B;
+    191: recalc:=$2510;
+    192: recalc:=$2514;
+    193: recalc:=$2534;
+    194: recalc:=$252C;
+    195: recalc:=$251C;
+    196: recalc:=$2500;
+    197: recalc:=$253C;
+    198: recalc:=$255E;
+    199: recalc:=$255F;
+    200: recalc:=$255A;
+    201: recalc:=$2554;
+    202: recalc:=$2569;
+    203: recalc:=$2566;
+    204: recalc:=$2560;
+    205: recalc:=$2550;
+    206: recalc:=$256C;
+    207: recalc:=$2567;
+    208: recalc:=$2568;
+    209: recalc:=$2564;
+    210: recalc:=$2565;
+    211: recalc:=$2559;
+    212: recalc:=$2558;
+    213: recalc:=$2552;
+    214: recalc:=$2553;
+    215: recalc:=$256B;
+    216: recalc:=$256A;
+    217: recalc:=$2518;
+    218: recalc:=$250C;
+    219: recalc:=$2588;
+    220: recalc:=$2584;
+    221: recalc:=$258C;
+    222: recalc:=$2590;
+    223: recalc:=$2580;
+    224: recalc:=$03B1;
+    225: recalc:=$00DF;
+    226: recalc:=$0393;
+    227: recalc:=$03C0;
+    228: recalc:=$03A3;
+    229: recalc:=$03C3;
+    230: recalc:=$00B5;
+    231: recalc:=$03C4;
+    232: recalc:=$03A6;
+    233: recalc:=$0398;
+    234: recalc:=$03A9;
+    235: recalc:=$03B4;
+    236: recalc:=$221E;
+    237: recalc:=$03C6;
+    238: recalc:=$03B5;
+    239: recalc:=$2229;
+    240: recalc:=$2261;
+    241: recalc:=$00B1;
+    242: recalc:=$2265;
+    243: recalc:=$2264;
+    244: recalc:=$2320;
+    245: recalc:=$2321;
+    246: recalc:=$00F7;
+    247: recalc:=$2248;
+    248: recalc:=$00B0;
+    249: recalc:=$2219;
+    250: recalc:=$00B7;
+    251: recalc:=$221A;
+    252: recalc:=$207F;
+    253: recalc:=$00B2;
+    254: recalc:=$25A0;
+    255: recalc:=$00A0;
+  end;
+end;
+procedure print(u:char);
+var o:word;
+begin
+  if (ord(u)>=32) and (ord(u)<=127) then write(u)
+  else begin
+    o := recalc(ord(u));
+    writewidechar(widechar(o));
+  end;
+end;
 var
 cmap,umap,map,pmap,t,t2,smap:array[-100..1100,-100..1100]of longint;{}
 queu:array[1..1000000]of Vector2;
@@ -957,7 +1100,7 @@ begin
     wd:=pi*-1;
     ai:=-1;
     writeln(tc[n].nm,': ',tc[n].cash,'$       ');
-    for rp:=1 to 10 do write(#196);
+    for rp:=1 to 10 do writewidechar(#$2500);
     writeln();
     while (wd<con)and(ai<1000) do
     begin
@@ -970,18 +1113,27 @@ begin
         if wd>0 then writeln('   ',ti[ai].nm,' (',tm[n].o[ai],')                       ');
       end;
     end;
-    for rp:=1 to 10 do write(#196);
+    for rp:=1 to 10 do writewidechar(#$2500);
     writeln();
     writeln('Buy: ',(tm[n].bprc*ti[aai].w) div 100* me.rep[tc[n].who] div 2500,'$                ' );
-    for rp:=1 to 10 do write(#196);
+    for rp:=1 to 10 do writewidechar(#$2500);
     writeln();
-    writeln('  ',#17,ti[sci].nm,#16,'                           ');
+    writeln('  ');
+    writewidechar(#$25C4);
+    write(ti[sci].nm);
+    writewidechar(#$25BA);
+    write('                           ');
     writeln('Sell: ',(tm[n].sprc*ti[sci].w) div 100*2500 div me.rep[tc[n].who],'$                ' );
-    for rp:=1 to 10 do write(#196);
+    for rp:=1 to 10 do writewidechar(#$2500);
     writeln();
     writeln(me.nm+': ',me.cash,'$');
     gotoxy(1,(con-1)div 2+3+ipi);
-    if dq>0 then WRITE(#196,#196,'>');
+    if dq>0 then
+    begin
+      writewidechar(#$2500);
+      writewidechar(#$2500);
+      write('>');
+    end;
     c:=' ';
     c:=readkey();
     if c='b' then
@@ -1314,9 +1466,9 @@ begin
   inc(creditsn);
   s2:='';
   for pr:=1 to (23-(length(s)+2*lin+2))div 2 do s2:=s2+' ';
-  for pr:=1 to lin do s2:=s2+#196;
+  for pr:=1 to lin do s2:=s2+trans(2500);
   s2:=s2+' '+s+' ';
-  for pr:=1 to lin do s2:=s2+#196;
+  for pr:=1 to lin do s2:=s2+trans(2500);
   for pr:=1 to (23-(length(s)+2*lin+2)) do s2:=s2+' ';
   credits[creditsn] :=s2;
 end;
@@ -1749,7 +1901,7 @@ begin
     end;
     if ((me.y=x)and(me.x=y))or(umap[y,x]<>0)or(pmap[y,x]<>0) then
     begin
-      if umap[y,x]<>0 then write(tet[tu[umap[y,x]].id].c[tu[umap[y,x]].om+1]) else if pmap[y,x]<>0 then write(char(23+tp[pmap[y,x]].d)) else write(#1);
+      if umap[y,x]<>0 then print(tet[tu[umap[y,x]].id].c[tu[umap[y,x]].om+1]) else if pmap[y,x]<>0 then print(char(23+tp[pmap[y,x]].d)) else print(#1);
     end else
     begin
       if random(8)=0 then write('~') else write(' ');
@@ -1786,7 +1938,7 @@ begin
     if (pmap[y,x]<>0)and(not(isDemonic)) then textcolor(tp[pmap[y,x]].col);
     if ((me.y=x)and(me.x=y))or(umap[y,x]<>0)or(pmap[y,x]<>0) then
     begin
-      if umap[y,x]<>0 then write(tet[tu[umap[y,x]].id].c[tu[umap[y,x]].om+1]) else if pmap[y,x]<>0 then write(char(23+tp[pmap[y,x]].d)) else write(#1);
+      if umap[y,x]<>0 then print(tet[tu[umap[y,x]].id].c[tu[umap[y,x]].om+1]) else if pmap[y,x]<>0 then print(char(23+tp[pmap[y,x]].d)) else print(#1);
     end
     else
     begin
@@ -1794,18 +1946,18 @@ begin
       if map[x,y-1]=4 then cos1:=cos1+10;
       if map[x+1,y]=4 then cos1:=cos1+100;
       if map[x-1,y]=4 then cos1:=cos1+1000;
-      if cos1=0 then write(#254);
-      if (cos1=1)or(cos1=10)or(cos1=11)then write(#205);
-      if (cos1=100)or(cos1=1000)or(cos1=1100)then write(#186);
-      if cos1=1111 then write(#206);
-      if cos1=111 then write(#203);
-      if cos1=101 then write(#201);
-      if cos1=110 then write(#187);
-      if cos1=1001 then write(#200);
-      if cos1=1010 then write(#188);
-      if cos1=1011 then write(#202);
-      if cos1=1101 then write(#204);
-      if cos1=1110 then write(#185);
+      if cos1=0 then writewidechar(#$25A0);
+      if (cos1=1)or(cos1=10)or(cos1=11)then writewidechar(#$2550);
+      if (cos1=100)or(cos1=1000)or(cos1=1100)then writewidechar(#$2551);
+      if cos1=1111 then writewidechar(#$256C);
+      if cos1=111 then writewidechar(#$2566);
+      if cos1=101 then writewidechar(#$2554);
+      if cos1=110 then writewidechar(#$2557);
+      if cos1=1001 then writewidechar(#$255A);
+      if cos1=1010 then writewidechar(#$255D);
+      if cos1=1011 then writewidechar(#$2569);
+      if cos1=1101 then writewidechar(#$2560);
+      if cos1=1110 then writewidechar(#$2563);
     end;
   end;
 end;
@@ -1872,7 +2024,7 @@ begin
       textbackground(red);
     end;
   end;
-  if wall then write(#254) else write(char(ctChar(x,y)));
+  if wall then writewidechar(#$25A0) else write(char(ctChar(x,y)));
 end;
 procedure render(x,y:longint);
 begin
@@ -1897,9 +2049,9 @@ begin
     end;
     if ((me.x=y)and(me.y=x))or(umap[y,x]<>0)or(pmap[y,x]<>0) then
     begin
-      if umap[y,x]<>0 then write(tet[tu[umap[y,x]].id].c[tu[umap[y,x]].om+1]) else if pmap[y,x]<>0 then write(char(23+tp[pmap[y,x]].d)) else write(#1);
+      if umap[y,x]<>0 then print(tet[tu[umap[y,x]].id].c[tu[umap[y,x]].om+1]) else if pmap[y,x]<>0 then print(char(23+tp[pmap[y,x]].d)) else print(#1);
     end
-    else write(ter[map[x,y]].tile);
+    else print(ter[map[x,y]].tile);
   end;
 end;
 procedure check_Amulet();
@@ -2151,7 +2303,7 @@ begin
     wd:=pi*-1;
     ai:=-1;
     writeln(me.nm,'                               ');
-    for rp:=1 to 10 do write(#196);
+    for rp:=1 to 10 do writewidechar(#$2500);
     writeln();
     while (wd<con)and(ai<1000) do
     begin
@@ -2182,7 +2334,7 @@ begin
         end;
       end;
     end;
-    for rp:=1 to 10 do write(#196);
+    for rp:=1 to 10 do writewidechar(#$2500);
     writeln();
     writeln('Cash: ',me.cash,'$                       ');
     write('Health: ',round(me.hp / 10):4);
@@ -2192,7 +2344,12 @@ begin
     writeln('Armor: ',zbrojka:4,'%');
     writeln('Score: ',me.scr:5);
     gotoxy(1,(con-1)div 2+3+ipi);
-    if dq>0 then WRITE(#196,#196,'>');
+    if dq>0 then
+    begin
+      writewidechar(#$2500);
+      writewidechar(#$2500);
+      write('>');
+    end;
     c:=' ';
     c:=readkey();
     if c='n' then
@@ -2808,13 +2965,13 @@ begin
     gotoxy(1,1);
     textcolor(black);
     textbackground(black);
-    for p:=1 to 23 do write(#219);
+    for p:=1 to 23 do writewidechar(#$2588);
     writeln();
     c:=#1;
     for p:=me.y-10 to me.y+10 do
     begin
       textcolor(black);
-      write(#219);
+      writewidechar(#$2588);
       for pp:=me.x-10 to me.x+10 do
       begin
         if(badTimer>0)and(p<me.y-7)and(pp>me.x+3) then
@@ -2827,16 +2984,16 @@ begin
       end;
       textcolor(black);
       textbackground(black);
-      write(#219);
+      writewidechar(#$2588);
       writeln();
     end;
     
     textcolor(black);
     textbackground(black);
-    for p:=1 to 23 do write(#219);
+    for p:=1 to 23 do writewidechar(#$2588);
     textbackground(white);
     writeln();
-    write(#219);
+    writewidechar(#$2588);
     //for p:=1 to 21 do write(' ');
     if cmap[me.y,me.x]<>0 then
     begin
@@ -2859,10 +3016,10 @@ begin
 	  if entcity = 4 then entcity := 3;
     end;
     textbackground(black);
-    write(#219);
+    writewidechar(#$2588);
     textbackground(white);
     writeln();
-    write(#219);
+    writewidechar(#$2588);
     textcolor(lightred);
     write(' ');
     for p:=1 to 19 do
@@ -2872,16 +3029,16 @@ begin
     write(' ');
     textcolor(black);
     textbackground(black);
-    write(#219);
+    writewidechar(#$2588);
     textbackground(white);
     writeln();
-    write(#219);
+    writewidechar(#$2588);
     write(' x=',me.x:4,'       y=',me.y:4,' ');
     textbackground(black);
-    write(#219);
+    writewidechar(#$2588);
     textbackground(white);
     writeln();
-    write(#219);
+    writewidechar(#$2588);
     s3:=ti[ci].nm;
     if (ti[ci].p=0)or(ti[ci].p=5) then
     begin
@@ -2900,21 +3057,21 @@ begin
     textcolor(black);
     for p:=(((21-cos1)div 2)+1+cos1) to 21 do write(' ');
     textbackground(black);
-    write(#219);
+    writewidechar(#$2588);
     writeln();
-    for p:=1 to 23 do write(#219);
+    for p:=1 to 23 do writewidechar(#$2588);
     writeln();
     if badTimer>1 then
     begin
       gotoxy(16,2);
       textcolor(black);
       textbackground(lightgray);
-      write(#219);
+      writewidechar(#$2588);
       textcolor(lightred);
       write('Timer:');
       gotoxy(16,3);
 	  textcolor(black);	
-      write(#219);
+      writewidechar(#$2588);
       textcolor(lightred);
       write(1000-badTimer:6);
       gotoxy(16,4);
